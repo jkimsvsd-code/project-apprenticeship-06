@@ -1,0 +1,643 @@
+{
+  "version": "pds-schema-v2",
+  "database": "Cloudflare D1 / SQLite",
+  "schema_source": "db/schema.ts",
+  "migration_directory": "drizzle",
+  "date_rules": {
+    "calendar_dates": "YYYY-MM-DD; stored without timezone conversion",
+    "timestamps": "UTC ISO 8601; rendered in Asia/Seoul",
+    "today": "Asia/Seoul calendar date",
+    "duration_unit": "integer minute",
+    "timer_rounding": "ceil(elapsedMilliseconds / 60000), minimum 1; manual corrections allowed",
+    "manual_duration": "positive integer; may differ from elapsed wall-clock time"
+  },
+  "query_rules": {
+    "period": "task due_date, inclusive from/to; default selected plan period",
+    "deleted": "soft-deleted tasks and their execution minutes excluded",
+    "planned": "count of non-deleted tasks, not plan documents",
+    "completed": "currently done tasks",
+    "delayed": "todo tasks whose due_date < Seoul today",
+    "blocked": "distinct tasks with at least one nonblank execution blocked_reason",
+    "estimated": "sum scoped tasks estimated_minutes",
+    "actual": "sum all execution actual_minutes for scoped tasks regardless of execution date",
+    "difference": "actual - estimated",
+    "empty": "zero for all metrics",
+    "sort_tie": "created_at ascending, then id ascending"
+  },
+  "preservation": {
+    "plan": "plan ID stable; every version including initial version in plan_revisions",
+    "execution": "separate rows, never overwrite plan baseline",
+    "completion": "unique(task_id, cycle); reopening increments cycle; commands ensure replay safety; batch transaction",
+    "timer": "server persisted; deletion preserves timer for undo",
+    "review": "period and improvement persisted; next_plan_id links to new plan; copied tasks are todo with no execution history"
+  },
+  "export": {
+    "format": "single JSON",
+    "includes": [
+      "plans",
+      "revisions",
+      "tasks including deleted",
+      "executions",
+      "timers",
+      "reviews",
+      "completions",
+      "timezone",
+      "duration_unit",
+      "exported_at",
+      "version"
+    ],
+    "excludes": [
+      "commands",
+      "runtime secrets"
+    ]
+  },
+  "tables": {
+    "commands": {
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "fingerprint",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "result_id",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "checks": []
+    },
+    "completions": {
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "task_id",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "cycle",
+          "type": "integer",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "completions_task_id_tasks_id_fk",
+          "tableFrom": "completions",
+          "tableTo": "tasks",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "completion_once_per_cycle",
+          "columns": [
+            "task_id",
+            "cycle"
+          ],
+          "isUnique": true
+        }
+      ],
+      "checks": []
+    },
+    "executions": {
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "task_id",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "started_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "ended_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "actual_minutes",
+          "type": "integer",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "blocked_reason",
+          "type": "text",
+          "required": true,
+          "primary_key": false,
+          "default": "''"
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "updated_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "executions_task_id_tasks_id_fk",
+          "tableFrom": "executions",
+          "tableTo": "tasks",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "executions_task",
+          "columns": [
+            "task_id"
+          ],
+          "isUnique": false
+        }
+      ],
+      "checks": [
+        {
+          "name": "execution_minutes",
+          "value": "\"executions\".\"actual_minutes\" >= 1"
+        },
+        {
+          "name": "execution_period",
+          "value": "\"executions\".\"ended_at\" >= \"executions\".\"started_at\""
+        }
+      ]
+    },
+    "plan_revisions": {
+      "fields": [
+        {
+          "name": "revision_id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "plan_id",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "start_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "end_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "priority",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "success_criteria",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "estimated_minutes",
+          "type": "integer",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "updated_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "plan_revisions_plan_id_plans_id_fk",
+          "tableFrom": "plan_revisions",
+          "tableTo": "plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "plan_version_unique",
+          "columns": [
+            "plan_id",
+            "version"
+          ],
+          "isUnique": true
+        }
+      ],
+      "checks": []
+    },
+    "plans": {
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "start_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "end_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "priority",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "success_criteria",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "estimated_minutes",
+          "type": "integer",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "version",
+          "type": "integer",
+          "required": true,
+          "primary_key": false,
+          "default": 1
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "updated_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [],
+      "indexes": [],
+      "checks": [
+        {
+          "name": "plan_minutes",
+          "value": "\"plans\".\"estimated_minutes\" >= 0"
+        },
+        {
+          "name": "plan_period",
+          "value": "\"plans\".\"end_date\" >= \"plans\".\"start_date\""
+        },
+        {
+          "name": "plan_priority",
+          "value": "\"plans\".\"priority\" in ('high','medium','low')"
+        }
+      ]
+    },
+    "reviews": {
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "plan_id",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "from_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "to_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "improvement",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "next_plan_id",
+          "type": "text",
+          "required": false,
+          "primary_key": false
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "updated_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "reviews_plan_id_plans_id_fk",
+          "tableFrom": "reviews",
+          "tableTo": "plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        {
+          "name": "reviews_next_plan_id_plans_id_fk",
+          "tableFrom": "reviews",
+          "tableTo": "plans",
+          "columnsFrom": [
+            "next_plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      ],
+      "indexes": [],
+      "checks": [
+        {
+          "name": "review_period",
+          "value": "\"reviews\".\"to_date\" >= \"reviews\".\"from_date\""
+        }
+      ]
+    },
+    "tasks": {
+      "fields": [
+        {
+          "name": "id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "plan_id",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "due_date",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "priority",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "tags",
+          "type": "text",
+          "required": true,
+          "primary_key": false,
+          "default": "'[]'"
+        },
+        {
+          "name": "estimated_minutes",
+          "type": "integer",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "required": true,
+          "primary_key": false,
+          "default": "'todo'"
+        },
+        {
+          "name": "completion_cycle",
+          "type": "integer",
+          "required": true,
+          "primary_key": false,
+          "default": 0
+        },
+        {
+          "name": "deleted_at",
+          "type": "text",
+          "required": false,
+          "primary_key": false
+        },
+        {
+          "name": "created_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        },
+        {
+          "name": "updated_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "tasks_plan_id_plans_id_fk",
+          "tableFrom": "tasks",
+          "tableTo": "plans",
+          "columnsFrom": [
+            "plan_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      ],
+      "indexes": [
+        {
+          "name": "tasks_plan_due",
+          "columns": [
+            "plan_id",
+            "due_date"
+          ],
+          "isUnique": false
+        }
+      ],
+      "checks": [
+        {
+          "name": "task_minutes",
+          "value": "\"tasks\".\"estimated_minutes\" >= 0"
+        },
+        {
+          "name": "task_status",
+          "value": "\"tasks\".\"status\" in ('todo','done')"
+        },
+        {
+          "name": "task_priority",
+          "value": "\"tasks\".\"priority\" in ('high','medium','low')"
+        }
+      ]
+    },
+    "timers": {
+      "fields": [
+        {
+          "name": "task_id",
+          "type": "text",
+          "required": true,
+          "primary_key": true
+        },
+        {
+          "name": "started_at",
+          "type": "text",
+          "required": true,
+          "primary_key": false
+        }
+      ],
+      "foreign_keys": [
+        {
+          "name": "timers_task_id_tasks_id_fk",
+          "tableFrom": "timers",
+          "tableTo": "tasks",
+          "columnsFrom": [
+            "task_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      ],
+      "indexes": [],
+      "checks": []
+    }
+  }
+}

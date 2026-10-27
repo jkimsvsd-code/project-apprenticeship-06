@@ -1,0 +1,44 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.pem
+*.key
+.aws/
+
+# Dependencies and generated output
+node_modules/
+.next/
+dist/
+build/
+coverage/
+test-results/
+playwright-report/
+.cache/
+.vercel/
+*.tsbuildinfo
+
+# Local data and unreviewed evidence
+/exports/
+/backups/
+/tmp/
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+
+# Machine-specific files
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# Sites local runtime
+.sites-runtime/
+.wrangler/
+.vinext/
+.dev.vars*
+outputs/
+work/
