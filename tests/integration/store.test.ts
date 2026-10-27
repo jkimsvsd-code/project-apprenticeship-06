@@ -245,3 +245,16 @@ test("foreign key and CHECK constraints reject direct inconsistent writes", () =
     ),
   );
 });
+
+test("export reads all related tables in one atomic batch", async () => {
+  const { db } = await setup();
+  let batches = 0;
+  const original = db.batch.bind(db);
+  db.batch = async (statements) => {
+    batches++;
+    assert.equal(statements.length, 7);
+    return original(statements);
+  };
+  await exportData(db);
+  assert.equal(batches, 1);
+});

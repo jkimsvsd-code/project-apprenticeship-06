@@ -72,16 +72,20 @@ function planFields(d: Data) {
 }
 const id = () => crypto.randomUUID();
 const snapshot = `INSERT INTO plan_revisions (revision_id,plan_id,version,title,start_date,end_date,priority,success_criteria,estimated_minutes,created_at,updated_at) SELECT ?,id,version,title,start_date,end_date,priority,success_criteria,estimated_minutes,created_at,updated_at FROM plans WHERE id=?`;
-export async function readState(db: Database): Promise<DiaryState> {
-  const [plans, revisions, tasks, executions, timers, reviews] =
-    (await db.batch([
-      db.prepare("SELECT * FROM plans ORDER BY created_at,id"),
-      db.prepare("SELECT *,plan_id AS id FROM plan_revisions ORDER BY version"),
-      db.prepare("SELECT * FROM tasks ORDER BY created_at,id"),
-      db.prepare("SELECT * FROM executions ORDER BY started_at,id"),
-      db.prepare("SELECT * FROM timers"),
-      db.prepare("SELECT * FROM reviews ORDER BY created_at DESC,id"),
-    ])) as { results: Record<string, unknown>[] }[];
+function stateQueries(db: Database) {
+  return [
+    db.prepare("SELECT * FROM plans ORDER BY created_at,id"),
+    db.prepare("SELECT *,plan_id AS id FROM plan_revisions ORDER BY version"),
+    db.prepare("SELECT * FROM tasks ORDER BY created_at,id"),
+    db.prepare("SELECT * FROM executions ORDER BY started_at,id"),
+    db.prepare("SELECT * FROM timers"),
+    db.prepare("SELECT * FROM reviews ORDER BY created_at DESC,id"),
+  ];
+}
+function stateFromRows(
+  rows: { results: Record<string, unknown>[] }[],
+): DiaryState {
+  const [plans, revisions, tasks, executions, timers, reviews] = rows;
   return {
     plans: plans.results,
     revisions: revisions.results,
@@ -94,6 +98,13 @@ export async function readState(db: Database): Promise<DiaryState> {
     reviews: reviews.results,
     today: seoulDate(),
   } as DiaryState;
+}
+export async function readState(db: Database): Promise<DiaryState> {
+  return stateFromRows(
+    (await db.batch(stateQueries(db))) as {
+      results: Record<string, unknown>[];
+    }[],
+  );
 }
 export async function mutate(
   db: Database,
@@ -389,16 +400,18 @@ export async function mutate(
   return { id: String(saved.result_id) };
 }
 export async function exportData(db: Database) {
-  const state = await readState(db);
-  const completions = await db
-    .prepare("SELECT * FROM completions ORDER BY created_at,id")
-    .all();
+  // Export every relation in one snapshot even when another visitor writes.
+  const rows = (await db.batch([
+    ...stateQueries(db),
+    db.prepare("SELECT * FROM completions ORDER BY created_at,id"),
+  ])) as { results: Record<string, unknown>[] }[];
+  const state = stateFromRows(rows);
   return {
     version: "pds-schema-v2",
     exported_at: new Date().toISOString(),
     timezone: "Asia/Seoul",
     duration_unit: "minute",
     ...state,
-    completions: completions.results,
+    completions: rows[6].results,
   };
 }
