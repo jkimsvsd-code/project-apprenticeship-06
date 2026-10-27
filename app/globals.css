@@ -394,9 +394,6 @@ small {
   width: 100%;
   padding: 14px 8px;
 }
-.sidebar-help svg:last-child {
-  margin-left: auto;
-}
 .profile {
   border-top: 1px solid var(--line);
   padding: 18px 5px 0;
@@ -669,21 +666,6 @@ main {
 }
 .paper-line:nth-child(4) i {
   max-width: 42px;
-}
-.paper-leaf {
-  position: absolute;
-  background: #cadbb8;
-  width: 51px;
-  height: 51px;
-  right: -23px;
-  bottom: 9px;
-  border-radius: 50% 50% 50% 8px;
-  display: grid;
-  place-items: center;
-  color: #587046;
-  font-size: 28px;
-  transform: rotate(9deg);
-  box-shadow: 0 3px 5px #5c7c3b10;
 }
 .orbit {
   position: absolute;
@@ -1076,17 +1058,6 @@ main {
   padding: 35px 20px 37px;
   text-align: center;
 }
-.empty-mark {
-  display: grid;
-  place-items: center;
-  color: #5c6d5b;
-  background: #f2f6ef;
-  border-radius: 13px;
-  width: 40px;
-  height: 40px;
-  font-size: 23px;
-  margin: 0 auto 14px;
-}
 .empty h3 {
   font-size: 13px;
   font-weight: 500;
@@ -1440,10 +1411,6 @@ main {
 .metric-card > span > small {
   font-size: 10px;
   color: #62695f;
-}
-.metric-card > span > svg {
-  margin-left: auto;
-  color: #636b5f;
 }
 .metric-card > strong {
   display: block;
@@ -2216,9 +2183,6 @@ fieldset {
     font-size: 11px;
     padding: 7px 9px;
   }
-  .topbar-actions .button span {
-    display: none;
-  }
   main {
     padding: 20px 20px 0;
   }
@@ -2297,12 +2261,6 @@ fieldset {
   .paper-line > span {
     width: 14px;
     height: 14px;
-  }
-  .paper-leaf {
-    width: 39px;
-    height: 39px;
-    font-size: 23px;
-    right: -18px;
   }
   .orbit-one {
     width: 170px;
@@ -2490,11 +2448,6 @@ fieldset {
   }
   .paper-line {
     gap: 7px;
-  }
-  .paper-leaf {
-    width: 32px;
-    height: 32px;
-    right: -12px;
   }
   .orbit-one {
     width: 145px;

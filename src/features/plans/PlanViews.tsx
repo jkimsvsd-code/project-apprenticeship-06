@@ -1,14 +1,5 @@
 "use client";
-import {
-  Plus,
-  ArrowUpRight,
-  CalendarDays,
-  Clock3,
-  Pencil,
-  History,
-  Target,
-  ArrowLeft,
-} from "lucide-react";
+import { Plus, CalendarDays, Clock3, Pencil, Target } from "lucide-react";
 import type { Plan, DiaryState } from "@/src/shared/domain";
 import {
   formatMinutes,
@@ -80,7 +71,6 @@ export function PlansGrid({
                     <Clock3 size={14} />
                     계획 예상 {formatMinutes(p.estimated_minutes)}
                   </span>
-                  <ArrowUpRight size={18} />
                 </div>
               </button>
             );
@@ -132,7 +122,6 @@ export function PlanHeader({
   return (
     <>
       <button className="back-link" onClick={onBack}>
-        <ArrowLeft size={15} />
         모든 계획
       </button>
       <div className="page-heading">
@@ -147,7 +136,6 @@ export function PlanHeader({
         </div>
         <div className="button-group">
           <button className="button secondary" onClick={onHistory}>
-            <History size={16} />
             수정 이력
           </button>
           <button className="button primary" onClick={onEdit}>

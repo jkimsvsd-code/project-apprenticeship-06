@@ -4,7 +4,7 @@
 
 [공개 다이어리 열기](https://pds-diary-apprenticeship-06-m2021.happybay512.chatgpt.site)
 
-[GitHub 소스](https://github.com/jkimsvsd-code/project-apprenticeship-06) · [과제 제출 문서](docs/submission.md) · [검증 결과](docs/evidence/verification-results.md)
+[GitHub 소스](https://github.com/jkimsvsd-code/project-apprenticeship-06) · [과제 제출 문서](docs/submission.md) · [회고·다음 계획 작성 안내](docs/usage.md) · [검증 결과](docs/evidence/verification-results.md)
 
 ![논문 작성 계획 화면](docs/evidence/app-preview.png)
 

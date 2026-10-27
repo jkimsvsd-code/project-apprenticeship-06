@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ArrowRight, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import { Modal, FormError } from "@/src/components/ui/Modal";
 import { seoulDate, priorities } from "@/src/shared/domain";
 import type { Plan, Task, Review } from "@/src/shared/domain";
@@ -212,11 +212,7 @@ export default function PlanForm({
               취소
             </button>
             <button className="button primary" type="submit">
-              {busy ? (
-                <LoaderCircle size={17} className="spin" />
-              ) : (
-                <ArrowRight size={17} />
-              )}{" "}
+              {busy && <LoaderCircle size={17} className="spin" />}
               {busy ? "저장 중…" : review ? "다음 계획 만들기" : "계획 저장"}
             </button>
           </div>

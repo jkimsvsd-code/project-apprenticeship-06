@@ -10,7 +10,6 @@ import {
   Search,
   SlidersHorizontal,
   Plus,
-  ArrowUpRight,
 } from "lucide-react";
 import {
   formatMinutes,
@@ -250,13 +249,13 @@ export function TaskExplorer({
       <p className="sort-note">
         <SlidersHorizontal size={12} />{" "}
         {filters.sort === "due"
-          ? "마감일 → 우선순위"
+          ? "마감일, 우선순위 순"
           : filters.sort === "priority"
             ? "높은 우선순위부터"
             : filters.sort === "estimate"
               ? "예상 시간이 짧은 순"
               : "먼저 등록한 순"}{" "}
-        · 같은 값은 등록 시각 → ID 순{" "}
+        · 같은 값은 등록 시각, ID 순{" "}
         <button
           className="text-button"
           onClick={() =>
@@ -284,7 +283,6 @@ export function TaskExplorer({
           {!tasks.length && (
             <button className="button secondary" onClick={onAdd}>
               할 일 추가
-              <ArrowUpRight size={16} />
             </button>
           )}
         </Empty>

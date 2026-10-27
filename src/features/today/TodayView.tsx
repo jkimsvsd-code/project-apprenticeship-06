@@ -1,12 +1,10 @@
 "use client";
 import {
   Plus,
-  ArrowRight,
-  Sunrise,
+  Sun,
   Sparkles,
   CheckCircle2,
   Clock3,
-  ArrowUpRight,
   Target,
 } from "lucide-react";
 import { Empty } from "@/src/components/ui/Modal";
@@ -67,7 +65,7 @@ export default function TodayView({
       <section className="today-hero">
         <div className="hero-copy">
           <span className="hero-label">
-            <Sunrise size={17} />
+            <Sun size={17} />
             계획과 실제 사이, 나를 알아가는 시간
           </span>
           <h2>
@@ -81,7 +79,6 @@ export default function TodayView({
           </p>
           <button className="hero-link" onClick={onReview}>
             나의 돌아보기
-            <ArrowRight size={16} />
           </button>
         </div>
         <div className="hero-art" aria-hidden="true">
@@ -102,7 +99,6 @@ export default function TodayView({
               <span />
               <i />
             </div>
-            <div className="paper-leaf">↗</div>
           </div>
           <span className="art-spark">✦</span>
           <div className="art-caption">
@@ -170,7 +166,6 @@ export default function TodayView({
               </div>
               <button className="text-button" onClick={onPlans}>
                 전체 보기
-                <ArrowUpRight size={15} />
               </button>
             </div>
             {due.length ? (
@@ -255,7 +250,6 @@ export default function TodayView({
           <p className="reflection-prompt">“다음에는 어떻게 해볼까?”</p>
           <button className="button secondary" onClick={onReview}>
             돌아보기 시작
-            <ArrowRight size={16} />
           </button>
           <span className="small-serif">a better tomorrow starts here.</span>
         </aside>

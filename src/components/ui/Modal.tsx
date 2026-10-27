@@ -79,7 +79,6 @@ export function Empty({
 }) {
   return (
     <div className="empty">
-      <span className="empty-mark">↗</span>
       <h3>{title}</h3>
       <p>{description}</p>
       {children}

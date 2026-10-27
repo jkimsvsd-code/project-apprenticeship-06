@@ -109,7 +109,7 @@ export default function TaskDetail({
               <div className="execution-head">
                 <span>
                   <Clock3 size={15} />
-                  {time(e.started_at)} → {time(e.ended_at)}
+                  {time(e.started_at)} ~ {time(e.ended_at)}
                 </span>
                 <button
                   className="icon-button"

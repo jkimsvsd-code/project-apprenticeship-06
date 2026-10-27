@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import {
-  ArrowRight,
-  ArrowUpRight,
   Check,
   Sparkles,
   BarChart3,
@@ -175,7 +173,6 @@ export default function ReviewView({
               <span>
                 {labels[k]}
                 {k === "planned" && <small>할 일 기준</small>}
-                <ArrowUpRight size={15} />
               </span>
               <strong>
                 {m[k]}
@@ -232,7 +229,6 @@ export default function ReviewView({
               {m.difference > 0 ? "+" : ""}
               {formatMinutes(m.difference)}
             </strong>
-            <ArrowUpRight size={16} />
           </button>
           <p className="hint">
             계획 자체의 예상 시간이 아닌, 대상 할 일의 예상 시간 합계와
@@ -396,7 +392,6 @@ export default function ReviewView({
                   }
                 >
                   {r.next_plan_id ? "연결한 계획 보기" : "다음 계획 만들기"}
-                  <ArrowRight size={15} />
                 </button>
               </article>
             ))}

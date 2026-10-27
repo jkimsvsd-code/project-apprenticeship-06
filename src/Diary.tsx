@@ -3,20 +3,16 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Sun,
   Layers3,
-  ChartNoAxesCombined,
-  Download,
+  BarChart3,
   Plus,
-  ArrowUpRight,
   ShieldCheck,
   LoaderCircle,
   Check,
-  RefreshCw,
   CircleHelp,
   Menu,
   X,
   BookOpen,
   Share2,
-  ArrowRight,
 } from "lucide-react";
 import TodayView from "./features/today/TodayView";
 import { PlansGrid, PlanHeader } from "./features/plans/PlanViews";
@@ -323,7 +319,7 @@ export default function Diary() {
       key: "review" as View,
       label: "돌아보기",
       subtitle: "다음을 위한 발견",
-      icon: ChartNoAxesCombined,
+      icon: BarChart3,
     },
   ];
   return (
@@ -407,7 +403,6 @@ export default function Diary() {
           >
             <CircleHelp size={17} />
             다이어리 사용 안내
-            <ArrowUpRight size={14} />
           </button>
           <div className="profile">
             <span className="profile-icon">
@@ -460,11 +455,7 @@ export default function Diary() {
               onClick={() => void exportAll()}
               aria-label="전체 자료 내보내기"
             >
-              {exporting ? (
-                <LoaderCircle size={15} className="spin" />
-              ) : (
-                <Download size={15} />
-              )}
+              {exporting && <LoaderCircle size={15} className="spin" />}
               <span>전체 내보내기</span>
             </button>
           </div>
@@ -498,7 +489,6 @@ export default function Diary() {
                       .catch((e) => setError(e.message));
                 }}
               >
-                <RefreshCw size={14} />
                 다시 시도
               </button>
             </div>
@@ -575,9 +565,8 @@ export default function Diary() {
                       })
                     }
                   >
-                    <ChartNoAxesCombined size={20} />
+                    <BarChart3 size={20} />
                     <span>이 계획의 예상과 실제를 돌아볼까요?</span>
-                    <ArrowRight size={18} />
                   </button>
                 </>
               ) : (
@@ -630,7 +619,7 @@ export default function Diary() {
               틈 <i>·</i> 계획과 실제 사이, 나를 알아가는 기록.
             </span>
             <span role="status" aria-live="polite">
-              {message || "PLAN → DO → SEE → PLAN"}
+              {message || "PLAN · DO · SEE"}
             </span>
           </footer>
         </main>
