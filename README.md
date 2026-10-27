@@ -2,7 +2,11 @@
 
 계획과 실제 사이, 나를 알아가는 기록.
 
-[다이어리 검토본 열기](https://pds-diary-apprenticeship-06-m2021.happybay512.chatgpt.site)
+[공개 다이어리 열기](https://pds-diary-apprenticeship-06-m2021.happybay512.chatgpt.site)
+
+[GitHub 소스](https://github.com/jkimsvsd-code/project-apprenticeship-06) · [과제 제출 문서](docs/submission.md) · [검증 결과](docs/evidence/verification-results.md)
+
+![논문 작성 계획 화면](docs/evidence/app-preview.png)
 
 **계획 → 할 일 → 실행 기록 → 돌아보기 → 다음 계획**을 연결하는 과제6 다이어리입니다. 필수 기능과 승인된 UX 개선 A·B 전체를 구현했습니다.
 
@@ -64,9 +68,9 @@ npm run build
 
 ## 공개와 배포
 
-현재 호스팅은 소유자용 비공개 검토본입니다. [배포 상태와 공개 범위](docs/deployment.md)를 참고하세요. 최종 공개 전환은 별도 승인 대기 중입니다.
+2026-10-27 사용자 승인에 따라 **공개 전환을 완료했습니다.** 논문 계획과 실행 기록을 포함해 링크를 아는 누구나 로그인 없이 조회·수정할 수 있습니다. 인증 정보·쿠키 없이 화면 조회, 기존 할 일 저장, 전체 내보내기가 성공한 것을 확인했습니다. [배포 상태와 공개 범위](docs/deployment.md)를 참고하세요.
 
-과제6의 최종 형태는 로그인이 없는 공동 공개 다이어리입니다. **주소를 아는 사람은 기록을 조회하고 변경할 수 있습니다.** 공개 가능한 본인 자료만 입력합니다. 로그인과 잠금은 과제7 범위입니다.
+이 앱은 로그인이 없는 공동 공개 다이어리입니다. **주소를 아는 사람은 기록을 조회하고 변경할 수 있습니다.** 공개 가능한 본인 자료만 입력합니다. 로그인과 잠금은 과제7 범위입니다.
 
 Sites의 서버 Worker와 D1 바인딩을 사용합니다. 배포 시 `.openai/hosting.json`의 Site ID·DB 선언을 사용하고, 새 프로젝트를 만들 때는 자신의 Site를 등록해 ID를 바꿔야 합니다. 키·Git 인증 토큰을 이 파일에 넣지 않습니다.
 
@@ -77,4 +81,10 @@ Sites의 서버 Worker와 D1 바인딩을 사용합니다. 배포 시 `.openai/h
 
 ## 문서
 
-[승인 범위](docs/requirements.md) · [구조와 데이터 설계](docs/architecture.md) · [UI 방향](docs/design.md) · [검증 계획](docs/verification.md) · [검증 결과](docs/evidence/verification-results.md) · [제출 준비](docs/submission.md)
+[승인 범위](docs/requirements.md) · [구조와 데이터 설계](docs/architecture.md) · [UI 방향](docs/design.md) · [검증 계획](docs/verification.md) · [검증 결과](docs/evidence/verification-results.md) · [과제 제출 문서](docs/submission.md)
+
+## 실제 사용 자료와 제출 상태
+
+사용자가 제공하고 확인한 논문 작성 계획 1개, 할 일 5개, 실행 기록 3개를 배포 DB에 저장했습니다. 기간은 2026-10-24~10-30, 예상 시간은 28시간, 실제 기록 합계는 75분입니다. 세 기록 모두 주제 탐색에 연결되어 있습니다. 할 일별 초기 시간·마감 배분은 수정 가능한 초기값입니다.
+
+돌아보기의 개선점과 다음 계획 연결 기능은 로컬 검증 자료로 확인했습니다. **본인의 실제 회고 한 줄과 다음 계획은 앱에서 직접 작성할 항목으로 남겨 두었습니다.** 샘플 회고를 실제 판단으로 대신하지 않습니다.
