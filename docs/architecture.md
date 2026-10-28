@@ -1,5 +1,11 @@
 # 구조와 데이터 설계 방향
 
+세부 구현을 탐색하는 [공개 인터랙티브 설계도](https://pds-diary-architecture-06-m2021.happybay512.chatgpt.site)는 로그인 없이 바로 열 수 있습니다. 요소에 마우스를 올리거나 키보드로 포커스를 옮기면 직접 연결된 개념과 선을 강조합니다. 클릭·터치하면 선택이 유지되며 작은 화면에서는 노드가 재배치됩니다. 구현 구조, 데이터 관계, 명령·규칙, 검증·운영의 네 관점을 제공합니다. 하단에는 전체 변경 명령, 모든 테이블 필드·제약, 소스별 import/export와 테스트 항목을 포함합니다. [오프라인 HTML](architecture-diagram.html)도 제공합니다.
+
+설계 원본은 [JavaScript 모델](architecture-model.mjs)과 [다이어그램 템플릿](architecture-diagram.template.html)입니다. `node scripts/build-architecture.mjs`로 DB 계약·현재 추적 소스 목록을 다시 읽어 브라우저에서 바로 열 수 있는 단일 HTML을 생성합니다. 이 명령은 DB나 배포 상태를 변경하지 않습니다. 상단의 커밋은 기준 HEAD이며 작업 폴더의 미커밋 변경도 생성 시 반영됩니다. 코드를 변경한 후 설계 설명은 모델에서 갱신하고 다시 생성해야 합니다. 테이블 세부 정의·명령 목록의 누락·연결 참조·소스 경로는 생성 시 검사합니다.
+
+설계도 전용 Sites ID는 [architecture-hosting.json](architecture-hosting.json)에 보존합니다. `node scripts/build-architecture.mjs --site-dir work/architecture-site`는 별도 사이트의 `dist/index.html`과 호스팅 선언을 준비합니다. 이후 Sites 소스 동기화·버전 저장·배포 단계가 필요하며, 파일 생성만으로 공개 사이트가 갱신되지는 않습니다. 기존 다이어리의 루트 `.openai/hosting.json`과 DB는 별도입니다.
+
 React 19·TypeScript와 Sites 공식 Vinext starter로 구현한 단일 웹 앱입니다. Cloudflare Worker의 API와 D1(SQLite)를 사용하며, Drizzle은 스키마·마이그레이션 생성에 사용합니다. DB 요청은 서버에서 매개변수 SQL과 원자적 batch로 처리합니다.
 
 ## 폴더 책임

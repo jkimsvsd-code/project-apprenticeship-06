@@ -4,6 +4,8 @@
 
 [공개 다이어리 열기](https://pds-diary-apprenticeship-06-m2021.happybay512.chatgpt.site)
 
+[인터랙티브 설계도 바로 열기](https://pds-diary-architecture-06-m2021.happybay512.chatgpt.site) — 로그인 없이 구현 구조·데이터 관계·처리 규칙을 탐색할 수 있습니다. 요소에 마우스를 올리면 연관 개념과 연결선이 강조됩니다.
+
 [GitHub 소스](https://github.com/jkimsvsd-code/project-apprenticeship-06) · [과제 제출 문서](docs/submission.md) · [회고·다음 계획 작성 안내](docs/usage.md) · [검증 결과](docs/evidence/verification-results.md)
 
 ![논문 작성 계획 화면](docs/evidence/app-preview.png)
@@ -82,6 +84,8 @@ Sites의 서버 Worker와 D1 바인딩을 사용합니다. 배포 시 `.openai/h
 ## 문서
 
 [승인 범위](docs/requirements.md) · [구조와 데이터 설계](docs/architecture.md) · [UI 방향](docs/design.md) · [검증 계획](docs/verification.md) · [검증 결과](docs/evidence/verification-results.md) · [과제 제출 문서](docs/submission.md)
+
+[인터랙티브 구현 설계도](https://pds-diary-architecture-06-m2021.happybay512.chatgpt.site) · [설계 원본 JavaScript](docs/architecture-model.mjs) · [오프라인 HTML](docs/architecture-diagram.html): hover·키보드 포커스·터치로 연결을 강조하며 화면 구조, 8개 테이블의 모든 필드·제약, 10개 변경 명령, 집계·보존 규칙과 소스별 의존성을 확인할 수 있습니다. GitHub에서는 공개 설계도 링크로 바로 열고, 오프라인 HTML은 내려받아 브라우저에서 엽니다. `node scripts/build-architecture.mjs`로 다시 생성합니다.
 
 ## 실제 사용 자료와 제출 상태
 
